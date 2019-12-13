@@ -1,0 +1,20 @@
+{
+    "app": {
+        "name": "CloudPlay",
+        "port": 9632
+    },
+    "private": {
+        "mongo": {
+            "url": "mongodb+srv://root:2ymAdp7Y4WglFDYD@cloudplay-8d6op.mongodb.net/test"
+        },
+        "jwt": {
+            "key": "bitchbetterhavemymoney"
+        }
+    },
+    "user": {
+        "roles": ["Student", "Teacher"],
+        "autocomplete": {
+            "limit": 6
+        }
+    }
+}
