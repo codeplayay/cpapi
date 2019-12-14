@@ -13,18 +13,10 @@ const schema = mongoose.Schema({
         match: __object_name
     },
 
-    // Department to which class belongs
-    department: mongoose.Schema.Types.ObjectId,
-
-    subjects: [{
+    marks: [{
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Subject'
+        ref: 'Marks'
     }],
-
-    semester: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Semester'
-    }
 });
 
-module.exports = mongoose.model('Class', schema);
+module.exports = mongoose.model('Semester', schema);

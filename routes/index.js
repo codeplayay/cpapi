@@ -30,4 +30,7 @@ router.use('/user', require('./user/teacher/autocomplete').router);
 router.use('/subject', require('./subject/create/local').router);
 router.use('/subject', require('./subject/list').router);
 
+// Collection
+router.use('/collection', require('./collection/marks/create').router);
+
 module.exports.router = router;
