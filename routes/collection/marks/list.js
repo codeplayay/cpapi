@@ -2,7 +2,6 @@ const express = require('express');
 
 // Models
 const Class = require('@models/class');
-const Semester = require('@models/semester');
 
 // Globals
 const Response = require('@globals/response');
