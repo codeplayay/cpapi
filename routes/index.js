@@ -15,6 +15,7 @@ router.use('/class', require('./class/create').router);
 router.use('/class', require('./class/update').router);
 router.use('/class', require('./class/list').router);
 router.use('/class', require('./class/options').router);
+router.use('/class', require('./class/students').router);
 
 // User
 router.use('/user', require('./user/student/register').router);
@@ -32,5 +33,8 @@ router.use('/subject', require('./subject/list').router);
 
 // Collection
 router.use('/collection', require('./collection/marks/create').router);
+router.use('/collection', require('./collection/marks/get').router);
+router.use('/collection', require('./collection/marks/list').router);
+router.use('/collection', require('./collection/marks/update').router);
 
 module.exports.router = router;
