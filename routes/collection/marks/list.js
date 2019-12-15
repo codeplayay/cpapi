@@ -1,6 +1,6 @@
 const express = require('express');
 
-// Models
+// Models 
 const Class = require('@models/class');
 
 // Globals
