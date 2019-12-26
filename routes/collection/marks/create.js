@@ -14,7 +14,7 @@ const Response = require('@globals/response');
 
 const router = express.Router();
 
-router.post('/marks/create', function (request, response) {
+router.post('/marks/create', async function (request, response) {
 
     // Get all students
     // Prepare
@@ -22,9 +22,17 @@ router.post('/marks/create', function (request, response) {
         _class: request.body._class
     };
 
+    // Session
+    const session = await Student.startSession();
+    session.startTransaction();
+
     Student.find(query).populate('user').exec((error, students) => {
         if (error) {
             console.error(error);
+
+            session.abortTransaction();
+            session.endSession();
+
             new Response(response, 400, null, null);
         }
 
@@ -48,6 +56,10 @@ router.post('/marks/create', function (request, response) {
         Marks(marks).save().then((marks) => {
             if (error) {
                 console.error(error);
+
+                session.abortTransaction();
+                session.endSession();
+
                 new Response(response, 400, null, null);
             }
 
@@ -58,6 +70,10 @@ router.post('/marks/create', function (request, response) {
             Class.findOne(query).exec((error, _class) => {
                 if (error) {
                     console.error(error);
+
+                    session.abortTransaction();
+                    session.endSession();
+
                     new Response(response, 400, null, null);
                 }
 
@@ -68,14 +84,25 @@ router.post('/marks/create', function (request, response) {
                 Semester.findOneAndUpdate(query, {"$push": { "marks" : marks.scores }}).exec((error, semester) => {
                     if (error) {
                         console.error(error);
+
+                        session.abortTransaction();
+                        session.endSession();
+
                         new Response(response, 400, null, null);
                     }
+
+                    session.commitTransaction();
+                    session.endSession();
 
                     new Response(response, 200, null, marks);
                 });
             });
         }).catch((error) => {
             console.error(error);
+
+            session.abortTransaction();
+            session.endSession();
+            
             new Response(response, 400, null, null);
         });
     });
