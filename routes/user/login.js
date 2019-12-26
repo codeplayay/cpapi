@@ -13,16 +13,27 @@ const Config = require('@globals/config.json');
 
 const router = express.Router();
 
-router.post('/login', function (request, response) {
+router.post('/login', async function (request, response) {
     // Prepare
     const query = { uid: request.body.uid };
+
+    // Session
+    const session = await User.startSession();
+    session.startTransaction();
 
     // Run
     User.findOne(query, function (error, user) {
         if (error) {
             console.error(error);
+
+            session.abortTransaction();
+            session.endSession();
+
             new Response(response, 400, null, null);
         } else if (user) {
+            session.commitTransaction();
+            session.endSession();
+            
             bcrypt.compare(request.body.password, user.password, function (error, verify) {
                 if (error) {
                     console.error(error);

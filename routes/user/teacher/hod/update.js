@@ -10,7 +10,7 @@ const Config = require('@globals/config.json');
 
 const router = express.Router();
 
-router.post('/teacher/hod/update', function (request, response) {
+router.post('/teacher/hod/update', async function (request, response) {
     // Prepare
     const query = {
         _id: request.body.user,
@@ -18,11 +18,19 @@ router.post('/teacher/hod/update', function (request, response) {
         role: Config.user.roles[1],
     };
 
+    // Session
+    const session = await User.startSession();
+    session.startTransaction();
+
     // Run
     // Find user
     User.findOne(query, function (error, user) {
         if (error) {
             console.error(error);
+
+            session.abortTransaction();
+            session.endSession();
+
             new Response(response, 400, null, null);
         } else {
             // Update teacher prototype
@@ -34,9 +42,17 @@ router.post('/teacher/hod/update', function (request, response) {
                 { runValidators: true, new: true }, function (error, teacher) {
                     if (error) {
                         console.error(error);
+
+                        session.abortTransaction();
+                        session.endSession();
+
                         new Response(response, 400, null, null);
                     } else {
                         user._prototype = teacher;
+
+                        session.commitTransaction();
+                        session.endSession();
+                        
                         new Response(response, 200, null, user);
                     }
                 });

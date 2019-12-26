@@ -27,7 +27,7 @@ router.post('/teacher/register', function (request, response) {
     let password = Password();
     console.log('Password : ', password);
 
-    bcrypt.hash(password.toString(), 8, function (error, hash) {
+    bcrypt.hash(password.toString(), 8, async function (error, hash) {
         if (error) {
             console.error(error);
             new Response(response, 400, null, null);
@@ -48,6 +48,10 @@ router.post('/teacher/register', function (request, response) {
             _prototype: _id__prototype
         });
 
+        // Session
+        const session = await User.startSession();
+        session.startTransaction();
+
         // Run
         User(user).save().then((user) => {
             const teacher = new Teacher({
@@ -58,13 +62,25 @@ router.post('/teacher/register', function (request, response) {
             // Run
             Teacher(teacher).save().then((prototype) => {
                 user._prototype = prototype;
+
+                session.commitTransaction();
+                session.endSession();
+
                 new Response(response, 200, null, user)
             }).catch((error) => {
                 console.error(error);
+
+                session.abortTransaction();
+                session.endSession();
+
                 new Response(response, 400, null, null);
             })
         }).catch((error) => {
             console.error(error);
+
+            session.abortTransaction();
+            session.endSession();
+
             new Response(response, 400, null, null);
         });
     });
