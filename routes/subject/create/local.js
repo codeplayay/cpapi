@@ -12,7 +12,7 @@ const Response = require('@globals/response');
 
 const router = express.Router();
 
-router.post('/create/local', function (request, response) {
+router.post('/create/local', async function (request, response) {
     // Prepare
     const subject = new Subject({
         _id: new ObjectId(),
@@ -20,6 +20,10 @@ router.post('/create/local', function (request, response) {
         code: request.body.code,
         pattern: request.body.pattern
     });
+
+    // Session
+    const session = await Subject.startSession();
+    session.startTransaction();
 
     // Run
     Subject(subject).save().then((subject) => {
@@ -34,13 +38,24 @@ router.post('/create/local', function (request, response) {
         }, { runValidators: true, new: true }, function (error, _class) {
             if (error) {
                 console.error(error);
+
+                session.abortTransaction();
+                session.endSession();
+
                 new Response(response, 400, null, null);
             } else {
+                session.commitTransaction();
+                session.endSession();
+                
                 new Response(response, 200, null, subject);
             }
         });
     }).catch((error) => {
         console.error(error);
+
+        session.abortTransaction();
+        session.endSession();
+
         new Response(response, 400, null, null);
     });
 });
