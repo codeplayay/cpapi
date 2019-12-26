@@ -12,7 +12,7 @@ const Response = require('@globals/response');
 
 const router = express.Router();
 
-router.post('/create', function (request, response) {
+router.post('/create', async function (request, response) {
 
     // Prepare semester
     const semester = new Semester({
@@ -20,6 +20,10 @@ router.post('/create', function (request, response) {
         name: '1',
         marks: []
     });
+
+    // Session
+    const session = await Semester.startSession();
+    session.startTransaction();
 
     Semester(semester).save().then((semester) => {
         // Prepare
@@ -32,11 +36,25 @@ router.post('/create', function (request, response) {
 
         // Run
         Class(_class).save().then((_class) => {
+            session.commitTransaction();
+            session.endSession();
+
             new Response(response, 200, null, _class);
         }).catch((error) => {
             console.error(error);
+            
+            session.abortTransaction();
+            session.endSession();
+
             new Response(response, 400, null, null);
         });
+    }).catch((error) => {
+        console.error(error);
+        
+        session.abortTransaction();
+        session.endSession();
+
+        new Response(response, 400, null, null);
     });
 });
 
