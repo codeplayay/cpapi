@@ -15,7 +15,7 @@ router.use('/class', require('./class/create').router);
 router.use('/class', require('./class/update').router);
 router.use('/class', require('./class/list').router);
 router.use('/class', require('./class/options').router);
-router.use('/class', require('./class/student').router);
+router.use('/class', require('./class/students').router);
 
 // User
 router.use('/user', require('./user/student/register').router);
