@@ -8,36 +8,24 @@ const Response = require('@globals/response');
 
 const router = express.Router();
 
-router.post('/teacher/hod/get', async function (request, response) {
+router.post('/teacher/hod/get', function (request, response) {
     // Prepare
     const query = {
         hod: request.body.department,
     };
-
-    // Session
-    const session = await Teacher.startSession();
-    session.startTransaction();
 
     // Run
     // Find user
     Teacher.findOne(query).populate('user').exec(function (error, teacher) {
         if (error) {
             console.error(error);
-
-            session.abortTransaction();
-            session.endSession();
-
             new Response(response, 400, null, null);
         } else {
             console.log(teacher)
             if (teacher === null)
                 new Response(response, 200, null, { _id: -1 });
-            else {
-                session.commitTransaction();
-                session.endSession();
-                
+            else 
                 new Response(response, 200, null, teacher);
-            }
         }
     });
 });
