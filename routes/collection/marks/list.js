@@ -8,15 +8,11 @@ const Response = require('@globals/response');
 
 const router = express.Router();
 
-router.post('/marks/list', async function (request, response) {
+router.post('/marks/list', function (request, response) {
     // Prepare
     const query = {
         _id: request.body._class
     };
-
-    // Session
-    const session = await Class.startSession();
-    session.startTransaction();
 
     // Run
     Class.find(query).populate({
@@ -31,15 +27,8 @@ router.post('/marks/list', async function (request, response) {
     }).exec(function (error, list) {
         if (error) {
             console.error(error);
-
-            session.abortTransaction();
-            session.endSession();
-
             new Response(response, 400, null, null);
         } else {
-            session.commitTransaction();
-            session.endSession();
-            
             new Response(response, 200, null, list);
         }
     });
