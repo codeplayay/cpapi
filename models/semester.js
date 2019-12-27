@@ -17,6 +17,11 @@ const schema = mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Marks'
     }],
+
+    subjects: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Subject'
+    }]
 });
 
 module.exports = mongoose.model('Semester', schema);

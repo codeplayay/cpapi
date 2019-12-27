@@ -16,11 +16,6 @@ const schema = mongoose.Schema({
     // Department to which class belongs
     department: mongoose.Schema.Types.ObjectId,
 
-    subjects: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Subject'
-    }],
-
     semester: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Semester'
