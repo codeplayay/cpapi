@@ -21,10 +21,10 @@ router.post('/teacher/hod/get', function (request, response) {
         if (error) {
             console.error(error);
 
-            console.log('Could not get class teacher');
+            console.log('Could not get hod');
             new Response(response, 400, null, null);
         } else {
-            console.log('Class teacher found');
+            console.log('HOD found');
             if (teacher === null)
                 new Response(response, 200, null, { _id: -1 });
             else

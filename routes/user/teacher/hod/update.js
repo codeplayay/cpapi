@@ -13,9 +13,9 @@ const router = express.Router();
 router.post('/teacher/hod/update', async function (request, response) {
     // Prepare
     const query = {
-        _id: request.body.user,
+        _id: request.body.newHODId,
         // Teacher
-        role: Config.user.roles[1],
+        role: Config.user.roles.teacher.name,
     };
 
     // Session
@@ -25,7 +25,7 @@ router.post('/teacher/hod/update', async function (request, response) {
 
     // Run
     // Find user
-    console.log('Finding user');
+    console.log(`Finding user ${request.body.newHODId}`);
     User.findOne(query, function (error, user) {
         if (error) {
             console.error(error);
@@ -41,7 +41,7 @@ router.post('/teacher/hod/update', async function (request, response) {
                 _id: user._prototype
             };
 
-            console.log('Updating prototypr');
+            console.log(`Updating new HOD prototype`);
             Teacher.findOneAndUpdate(query, { $set: { hod: request.body.department } },
                 { runValidators: true, new: true }, function (error, teacher) {
                     if (error) {
@@ -53,15 +53,48 @@ router.post('/teacher/hod/update', async function (request, response) {
 
                         new Response(response, 400, null, null);
                     } else {
-                        console.log('HOD updated');
+                        console.log('New HOD updated');
 
                         user._prototype = teacher;
 
-                        session.commitTransaction();
-                        session.endSession();
-                        console.log('Session terminated');
+                        // If old HOD is same as new HOD
+                        // OR
+                        // Allocating HOD for the first time
+                        if (request.body.oldHODPrototype === teacher || request.body.oldHODPrototype === -1) {
+                            session.commitTransaction();
+                            session.endSession();
+                            console.log('Session terminated');
 
-                        new Response(response, 200, null, user);
+                            console.log(user);
+                            new Response(response, 200, null, user);
+
+                        } else {
+                            console.log(`Updating old HOD prototype`);
+                            const query = {
+                                _id: request.body.oldHODPrototype
+                            };
+                            Teacher.findOneAndUpdate(query, { $set: { hod: null } },
+                                { runValidators: true, new: true }, function (error, _) {
+                                    if (error) {
+                                        console.error(error);
+
+                                        session.abortTransaction();
+                                        session.endSession();
+                                        console.log('Session aborted');
+
+                                        new Response(response, 400, null, null);
+                                    } else {
+                                        console.log('Old HOD updated');
+
+                                        session.commitTransaction();
+                                        session.endSession();
+                                        console.log('Session terminated');
+
+                                        console.log(user);
+                                        new Response(response, 200, null, user);
+                                    }
+                                });
+                        }
                     }
                 });
         }

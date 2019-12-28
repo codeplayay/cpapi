@@ -22,9 +22,7 @@ router.use('/user', require('./user/student/register').router);
 router.use('/user', require('./user/teacher/register').router);
 router.use('/user', require('./user/login').router);
 router.use('/user', require('./user/teacher/hod/update').router);
-router.use('/user', require('./user/teacher/classteacher/update').router);
 router.use('/user', require('./user/teacher/hod/get').router);
-router.use('/user', require('./user/teacher/classteacher/get').router);
 router.use('/user', require('./user/teacher/autocomplete').router);
 
 // Subject

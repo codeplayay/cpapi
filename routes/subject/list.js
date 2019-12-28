@@ -17,6 +17,7 @@ router.post('/list', function (_, response) {
     Class.findOne(query, function (error, _class) {
         if (error) {
             console.error(error);
+
             new Response(response, 400, null, null);
         } else {
             // Prepare
@@ -25,11 +26,14 @@ router.post('/list', function (_, response) {
             };
 
             // Run
-            Semester.findOne(query).populate('subjects').exec(function (error, subjects) {
-                if(error) {
+            console.log('Enlisting subjects');
+            Semester.findOne(query).populate('subjects').exec(function (error, semester) {
+                if (error) {
                     console.error(error);
+                    console.log('Enlisting subjects failed');
                 } else {
-                    new Response(response, 200, null, subjects);
+                    console.log('Subjects enlisted');
+                    new Response(response, 200, null, semester.subjects);
                 }
             })
         }
