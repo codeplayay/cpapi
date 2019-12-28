@@ -15,7 +15,7 @@ router.post('/marks/list', function (request, response) {
     };
 
     // Run
-    Class.find(query).populate({
+    Class.findOne(query).populate({
         path: 'semester',
         populate: {
             path: 'marks',

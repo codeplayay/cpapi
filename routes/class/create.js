@@ -13,19 +13,24 @@ const Response = require('@globals/response');
 const router = express.Router();
 
 router.post('/create', async function (request, response) {
+    // Session
+    console.log('Session started');
+    const session = await Semester.startSession();
+    session.startTransaction();
 
     // Prepare semester
     const semester = new Semester({
         _id: new ObjectId(),
-        name: '1',
-        marks: []
+        name: 'Untitled',
+        marks: [],
+        subjects: []
     });
 
-    // Session
-    const session = await Semester.startSession();
-    session.startTransaction();
-
+    // Run
+    console.log(`Creating default semester for class ${request.body.name}`);
     Semester(semester).save().then((semester) => {
+        console.log('Default semester created');
+
         // Prepare
         const _class = new Class({
             _id: new ObjectId(),
@@ -35,24 +40,30 @@ router.post('/create', async function (request, response) {
         });
 
         // Run
+        console.log(`Creating class ${request.body.name}`);
         Class(_class).save().then((_class) => {
+            console.log('Class created');
+
             session.commitTransaction();
             session.endSession();
+            console.log('Session terminated');
 
             new Response(response, 200, null, _class);
         }).catch((error) => {
             console.error(error);
-            
+
             session.abortTransaction();
             session.endSession();
+            console.log('Session aborted');
 
             new Response(response, 400, null, null);
         });
     }).catch((error) => {
         console.error(error);
-        
+
         session.abortTransaction();
         session.endSession();
+        console.log('Session aborted');
 
         new Response(response, 400, null, null);
     });

@@ -28,9 +28,7 @@ router.post('/create/local', async function (request, response) {
     // Run
     Subject(subject).save().then((subject) => {
         // Prepare
-        const query = {
-            _id: "5df390405a9e4c22ac3b70cf"
-        };
+        const query = {};
 
         // Run
         Class.findOneAndUpdate(query, {
@@ -46,7 +44,7 @@ router.post('/create/local', async function (request, response) {
             } else {
                 session.commitTransaction();
                 session.endSession();
-                
+
                 new Response(response, 200, null, subject);
             }
         });

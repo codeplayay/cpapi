@@ -15,11 +15,15 @@ router.post('/list', function (request, response) {
     };
 
     // Run
+    console.log(`Enlisting classes of department ${request.body.department}`);
     Class.find(query, function (error, list) {
         if (error) {
             console.error(error);
+
+            console.log('Enlisting classes failed');
             new Response(response, 400, null, null);
         } else {
+            console.log('Classes enlisted');
             new Response(response, 200, null, list);
         }
     });

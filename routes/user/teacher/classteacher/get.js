@@ -16,12 +16,15 @@ router.post('/teacher/classteacher/get', function (request, response) {
 
     // Run
     // Find user
+    console.log(`Getting class teacher of class ${request.body._class}`);
     Teacher.findOne(query).populate('user').exec(function (error, teacher) {
         if (error) {
             console.error(error);
+
+            console.log('Could not get class teacher');
             new Response(response, 400, null, null);
         } else {
-            console.log(teacher)
+            console.log('Class teacher found');
             if (teacher === null)
                 new Response(response, 200, null, { _id: -1 });
             else

@@ -16,15 +16,18 @@ router.post('/teacher/hod/get', function (request, response) {
 
     // Run
     // Find user
+    console.log(`Getting hod of department ${request.body.department}`);
     Teacher.findOne(query).populate('user').exec(function (error, teacher) {
         if (error) {
             console.error(error);
+
+            console.log('Could not get class teacher');
             new Response(response, 400, null, null);
         } else {
-            console.log(teacher)
+            console.log('Class teacher found');
             if (teacher === null)
                 new Response(response, 200, null, { _id: -1 });
-            else 
+            else
                 new Response(response, 200, null, teacher);
         }
     });

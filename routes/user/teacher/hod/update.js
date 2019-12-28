@@ -19,17 +19,20 @@ router.post('/teacher/hod/update', async function (request, response) {
     };
 
     // Session
+    console.log('Session started');
     const session = await User.startSession();
     session.startTransaction();
 
     // Run
     // Find user
+    console.log('Finding user');
     User.findOne(query, function (error, user) {
         if (error) {
             console.error(error);
 
             session.abortTransaction();
             session.endSession();
+            console.log('Session aborted');
 
             new Response(response, 400, null, null);
         } else {
@@ -38,6 +41,7 @@ router.post('/teacher/hod/update', async function (request, response) {
                 _id: user._prototype
             };
 
+            console.log('Updating prototypr');
             Teacher.findOneAndUpdate(query, { $set: { hod: request.body.department } },
                 { runValidators: true, new: true }, function (error, teacher) {
                     if (error) {
@@ -45,14 +49,18 @@ router.post('/teacher/hod/update', async function (request, response) {
 
                         session.abortTransaction();
                         session.endSession();
+                        console.log('Session aborted');
 
                         new Response(response, 400, null, null);
                     } else {
+                        console.log('HOD updated');
+
                         user._prototype = teacher;
 
                         session.commitTransaction();
                         session.endSession();
-                        
+                        console.log('Session terminated');
+
                         new Response(response, 200, null, user);
                     }
                 });

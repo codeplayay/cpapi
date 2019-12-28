@@ -12,7 +12,14 @@
         }
     },
     "user": {
-        "roles": ["Student", "Teacher"],
+        "roles": {
+            "student": {
+                "name": "Student"
+            },
+            "teacher": {
+                "name": "Teacher"
+            }
+        },
         "autocomplete": {
             "limit": 6
         }

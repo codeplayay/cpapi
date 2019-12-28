@@ -10,9 +10,7 @@ const router = express.Router();
 
 router.post('/list', function (_, response) {
     // Prepare
-    const query = {
-        _id: '5df390405a9e4c22ac3b70cf'
-    };
+    const query = {};
 
     // Run
     Class.findOne(query).populate('subjects').exec(function (error, _class) {

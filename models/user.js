@@ -47,7 +47,7 @@ const schema = mongoose.Schema({
 
     role: {
         type: String,
-        enum: Config.user.roles,
+        enum: [Config.user.roles.student.name, Config.user.roles.teacher.name],
         required: true
     },
 
@@ -58,6 +58,6 @@ const schema = mongoose.Schema({
 });
 
 // Indexes
-schema.index({'$**' : 'text'});
+schema.index({ '$**': 'text' });
 
 module.exports = mongoose.model('User', schema);

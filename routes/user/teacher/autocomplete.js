@@ -13,14 +13,14 @@ router.post('/teacher/autocomplete', function (request, response) {
     // Prepare
     query = {
         $text: { $search: request.body.query },
-        role: Config.user.roles[1]
+        role: Config.user.roles.teacher.name
     };
 
     // Run
     User.find(query).limit(Config.user.autocomplete.limit).exec(function (error, result) {
         if (error) {
             console.error(error);
-            new Response(response, 200, null, []);
+            new Response(response, 400, null, null);
         } else {
             new Response(response, 200, null, result);
         }

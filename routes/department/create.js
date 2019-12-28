@@ -12,20 +12,26 @@ const Response = require('@globals/response');
 const router = express.Router();
 
 router.post('/create', async function (request, response) {
+
+    // Session
+    console.log('Session started');
+    const session = await Department.startSession();
+    session.startTransaction();
+
     // Prepare
     const department = new Department({
         _id: new ObjectId(),
         name: request.body.name
     });
 
-    // Session
-    const session = await Department.startSession();
-    session.startTransaction();
-
     // Run
+    console.log(`Creating department ${request.body.name}`);
     Department(department).save().then((department) => {
+        console.log('Department created');
+
         session.commitTransaction();
         session.endSession();
+        console.log('Session terminated');
 
         new Response(response, 200, null, department);
     }).catch((error) => {
@@ -33,7 +39,8 @@ router.post('/create', async function (request, response) {
 
         session.abortTransaction();
         session.endSession();
-        
+        console.log('Session aborted');
+
         new Response(response, 400, null, null);
     });
 });

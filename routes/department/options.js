@@ -13,10 +13,13 @@ router.post('/options', function (_, response) {
     const query = {};
 
     // Run
+    console.log('Enlisting departments');
     Department.find(query, function (error, list) {
         if (error) {
             console.error(error);
-            new Response(response, 200, null, []);
+
+            console.log('Enlisting departments failed');
+            new Response(response, 200, null, null);
         } else {
             var options = [];
 
@@ -27,7 +30,8 @@ router.post('/options', function (_, response) {
                 })
             });
 
-            new Response(response, 200, null, options);
+            console.log('Departments enlisted');
+            new Response(response, 400, null, null);
         }
     });
 });

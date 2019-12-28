@@ -17,10 +17,13 @@ router.post('/options/:department', function (request, response) {
         };
 
         // Run
+        console.log(`Enlisting classes of department ${request.params.department}`);
         Class.find(query, function (error, list) {
             if (error) {
                 console.error(error);
-                new Response(response, 200, null, []);
+
+                console.log('Enlisting classes failed');
+                new Response(response, 400, null, null);
             } else {
                 var options = [];
 
@@ -31,11 +34,13 @@ router.post('/options/:department', function (request, response) {
                     })
                 });
 
+                console.log('Classes enlisted');
                 new Response(response, 200, null, options);
             }
         });
     } else {
-        new Response(response, 200, null, []);
+        console.log('Invalid ObjectId');
+        new Response(response, 400, null, null);
     }
 });
 

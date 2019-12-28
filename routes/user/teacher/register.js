@@ -30,41 +30,52 @@ router.post('/teacher/register', function (request, response) {
     bcrypt.hash(password.toString(), 8, async function (error, hash) {
         if (error) {
             console.error(error);
+
+            console.log('Failed to hash');
             new Response(response, 400, null, null);
         }
 
         // Prepare
-        const _id__user = new ObjectId();
-        const _id__prototype = new ObjectId();
+        const userId = new ObjectId();
+        const prototypeId = new ObjectId();
 
         const user = new User({
-            _id: _id__user,
+            _id: userId,
             fname: request.body.fname,
             mname: request.body.mname,
             lname: request.body.lname,
             uid: uid,
             password: hash,
-            role: Config.user.roles[1],
-            _prototype: _id__prototype
+            // Teacher
+            role: Config.user.teacher.name,
+            _prototype: prototypeId
         });
 
         // Session
+        console.log('Session started');
         const session = await User.startSession();
         session.startTransaction();
 
         // Run
+        console.log(`Registering user ${request.body.fname} ${request.body.mname} ${request.body.lname}`);
         User(user).save().then((user) => {
+            console.log('User registered');
+
             const teacher = new Teacher({
-                _id: _id__prototype,
-                user: _id__user
+                _id: prototypeId,
+                user: userId
             });
 
             // Run
+            console.log('Saving teacher prototype');
             Teacher(teacher).save().then((prototype) => {
+                console.log('Prototype saved');
+
                 user._prototype = prototype;
 
                 session.commitTransaction();
                 session.endSession();
+                console.log('Session terminated');
 
                 new Response(response, 200, null, user)
             }).catch((error) => {
@@ -72,6 +83,7 @@ router.post('/teacher/register', function (request, response) {
 
                 session.abortTransaction();
                 session.endSession();
+                console.log('Session aborted');
 
                 new Response(response, 400, null, null);
             })
@@ -80,6 +92,7 @@ router.post('/teacher/register', function (request, response) {
 
             session.abortTransaction();
             session.endSession();
+            console.log('Session aborted');
 
             new Response(response, 400, null, null);
         });
