@@ -23,21 +23,26 @@ router.post('/create/local', async function (request, response) {
     });
 
     // Session
+    console.log('Start transaction');
     const session = await Subject.startSession();
     session.startTransaction();
 
     // Run
+    console.log('Saving subject');
     Subject(subject).save().then((subject) => {
         // Prepare
         let query = {};
 
         // Run
+        console.log('Finding class');
         Class.findOne(query, function (error, _class) {
             if (error) {
                 console.error(error);
+                console.log('Could not find class');
 
                 session.abortTransaction();
                 session.endSession();
+                console.log('Session aborted');
 
                 new Response(response, 400, null, null);
             } else {
@@ -47,19 +52,23 @@ router.post('/create/local', async function (request, response) {
                 }
 
                 // Run
+                console.log('Saving subject');
                 Semester.findOneAndUpdate(query, {
                     "$push": { "subjects": subject._id }
                 }, { runValidators: true, new: true }, function (error, semester) {
                     if(error) {
                         console.error(error);
+                        console.log('Could not save subject');
 
                         session.abortTransaction();
                         session.endSession();
+                        console.log('Session aborted');
 
                         new Response(response, 400, null, null);
                     } else {
                         session.commitTransaction();
                         session.endSession();
+                        console.log('Session terminated');
 
                         new Response(response, 200, null, semester);
                     }
@@ -68,9 +77,11 @@ router.post('/create/local', async function (request, response) {
         });
     }).catch((error) => {
         console.error(error);
+        console.log('Could not save subject');
 
         session.abortTransaction();
         session.endSession();
+        console.log('Session aborted');
 
         new Response(response, 400, null, null);
     });
