@@ -6,6 +6,7 @@ const ObjectId = require('mongoose').Types.ObjectId;
 // Models
 const Class = require('@models/class');
 const Subject = require('@models/subject');
+const Semester = require('@models/semester');
 
 // Globals
 const Response = require('@globals/response');
@@ -28,12 +29,10 @@ router.post('/create/local', async function (request, response) {
     // Run
     Subject(subject).save().then((subject) => {
         // Prepare
-        const query = {};
+        let query = {};
 
         // Run
-        Class.findOneAndUpdate(query, {
-            "$push": { "subjects": subject._id }
-        }, { runValidators: true, new: true }, function (error, _class) {
+        Class.findOne(query, function (error, _class) {
             if (error) {
                 console.error(error);
 
@@ -42,10 +41,29 @@ router.post('/create/local', async function (request, response) {
 
                 new Response(response, 400, null, null);
             } else {
-                session.commitTransaction();
-                session.endSession();
+                // Prepare
+                query = {
+                    _id: _class.semester
+                }
 
-                new Response(response, 200, null, subject);
+                // Run
+                Semester.findOneAndUpdate(query, {
+                    "$push": { "subjects": subject._id }
+                }, { runValidators: true, new: true }, function (error, semester) {
+                    if(error) {
+                        console.error(error);
+
+                        session.abortTransaction();
+                        session.endSession();
+
+                        new Response(response, 400, null, null);
+                    } else {
+                        session.commitTransaction();
+                        session.endSession();
+
+                        new Response(response, 200, null, semester);
+                    }
+                })
             }
         });
     }).catch((error) => {
