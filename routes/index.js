@@ -29,6 +29,10 @@ router.use('/user', require('./user/teacher/autocomplete').router);
 router.use('/subject', require('./subject/create/local').router);
 router.use('/subject', require('./subject/list').router);
 
+// TimeTable
+router.use('/timetable', require('./timetable/slot').router);
+router.use('/timetable', require('./timetable/update').router);
+
 // Collection
 router.use('/collection', require('./collection/marks/create').router);
 router.use('/collection', require('./collection/marks/get').router);
