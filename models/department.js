@@ -12,6 +12,12 @@ const schema = mongoose.Schema({
         trim: true,
         match: __object_name
     },
+
+    timeSlots: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'TimeSlot'
+    }]
+    
 });
 
 module.exports = mongoose.model('Department', schema);
