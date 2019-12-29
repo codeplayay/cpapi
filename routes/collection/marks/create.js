@@ -23,15 +23,18 @@ router.post('/marks/create', async function (request, response) {
     };
 
     // Session
+    console.log('Session started');
     const session = await Student.startSession();
     session.startTransaction();
 
+    console.log(`Finding students of class ${request.body._class}`);
     Student.find(query).populate('user').exec((error, students) => {
         if (error) {
             console.error(error);
 
             session.abortTransaction();
             session.endSession();
+            console.log('Session aborted');
 
             new Response(response, 400, null, null);
         }
@@ -53,6 +56,7 @@ router.post('/marks/create', async function (request, response) {
             scores: scores
         });
 
+        console.log(`Creating marks`);
         Marks(marks).save().then((marks) => {
             if (error) {
                 console.error(error);
@@ -67,12 +71,14 @@ router.post('/marks/create', async function (request, response) {
                 _id: request.body._class
             };
 
+            console.log(`Finding class ${request.body._class}`);
             Class.findOne(query).exec((error, _class) => {
                 if (error) {
                     console.error(error);
 
                     session.abortTransaction();
                     session.endSession();
+                    console.log('Session aborted');
 
                     new Response(response, 400, null, null);
                 }
@@ -81,18 +87,21 @@ router.post('/marks/create', async function (request, response) {
                     _id: _class.semester
                 };
 
+                console.log(`Finding semester ${_class.semester} to update marks`);
                 Semester.findOneAndUpdate(query, {"$push": { "marks" : marks.scores }}).exec((error, semester) => {
                     if (error) {
                         console.error(error);
 
                         session.abortTransaction();
                         session.endSession();
+                        console.log('Session aborted');
 
                         new Response(response, 400, null, null);
                     }
 
                     session.commitTransaction();
                     session.endSession();
+                    console.log('Session terminated');
 
                     new Response(response, 200, null, marks);
                 });
@@ -102,6 +111,7 @@ router.post('/marks/create', async function (request, response) {
 
             session.abortTransaction();
             session.endSession();
+            console.log('Session aborted');
             
             new Response(response, 400, null, null);
         });

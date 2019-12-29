@@ -15,11 +15,15 @@ router.post('/marks/get', function (request, response) {
     };
 
     // Run
+    console.log(`Finding marks ${request.body.marks}`);
     Marks.find(query, function (error, marks) {
         if (error) {
             console.error(error);
+
+            console.log('Finding marks failed');
             new Response(response, 400, null, null);
         } else {
+            console.log('Marks found');
             new Response(response, 200, null, marks);
         }
     });

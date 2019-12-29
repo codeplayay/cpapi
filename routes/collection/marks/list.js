@@ -15,6 +15,7 @@ router.post('/marks/list', function (request, response) {
     };
 
     // Run
+    console.log(`Finding class ${request.body._class} and then populating`);
     Class.findOne(query).populate({
         path: 'semester',
         populate: {
@@ -27,8 +28,11 @@ router.post('/marks/list', function (request, response) {
     }).exec(function (error, list) {
         if (error) {
             console.error(error);
+
+            console.log('Finding class failed');
             new Response(response, 400, null, null);
         } else {
+            console.log('Class found and populated');
             new Response(response, 200, null, list);
         }
     });
