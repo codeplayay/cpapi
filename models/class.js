@@ -19,7 +19,12 @@ const schema = mongoose.Schema({
     semester: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Semester'
-    }
+    },
+
+    timetable: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Period'
+    }]
 });
 
 module.exports = mongoose.model('Class', schema);
