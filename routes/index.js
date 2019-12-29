@@ -35,4 +35,8 @@ router.use('/collection', require('./collection/marks/get').router);
 router.use('/collection', require('./collection/marks/list').router);
 router.use('/collection', require('./collection/marks/update').router);
 
+// Notice
+router.use('/notice', require('./notice/post').router);
+router.use('/notice', require('./notice/list').router);
+
 module.exports.router = router;
