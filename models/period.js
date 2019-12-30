@@ -3,6 +3,9 @@ const mongoose = require('mongoose');
 // Models
 const Config = require('@globals/config.json');
 
+// Patterns
+const { __time } = require('@globals/patterns');
+
 const schema = mongoose.Schema({
     _id: mongoose.Schema.Types.ObjectId,
 
@@ -13,9 +16,19 @@ const schema = mongoose.Schema({
     },
 
     time: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'TimeSlot',
-        required: true
+        from: {
+            type: String,
+            required: true,
+            trim: true,
+            match: __time
+        },
+    
+        to: {
+            type: String,
+            required: true,
+            trim: true,
+            match: __time
+        }
     },
 
     subject: {
