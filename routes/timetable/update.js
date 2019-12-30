@@ -36,6 +36,9 @@ router.post('/update', async function (request, response) {
 
             console.log('Finding class failed');
             new Response(response, 400, null, null);
+        } else if(!_class) {
+            console.log('Class does not exists');
+            new Response(response, 400, null, null);
         } else {
             console.log('Class found');
 
@@ -55,11 +58,16 @@ router.post('/update', async function (request, response) {
                     let periods = [];
                     let periodIds = [];
                     for(index = 0; index < request.body.periods.length; index++) {
+                        let time = {
+                            from: request.body.periods[index].from,
+                            to: request.body.periods[index].to
+                        };
+
                         let id = new ObjectId();
                         let period = new Period({
                             _id: id,
                             day: request.body.periods[index].day,
-                            time: request.body.periods[index].time,
+                            time: time,
                             subject: request.body.periods[index].subject,
                             teacher: request.body.periods[index].teacher
                         });
