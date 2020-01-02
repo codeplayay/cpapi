@@ -88,7 +88,7 @@ router.post('/marks/create', async function (request, response) {
                 };
 
                 console.log(`Finding semester ${_class.semester} to update marks`);
-                Semester.findOneAndUpdate(query, {"$push": { "marks" : marks.scores }}).exec((error, semester) => {
+                Semester.findOneAndUpdate(query, {"$push": { "marks" : marks._id }}).exec((error, semester) => {
                     if (error) {
                         console.error(error);
 
