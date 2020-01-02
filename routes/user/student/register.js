@@ -47,7 +47,7 @@ router.post('/student/register', function (request, response) {
             uid: uid,
             password: hash,
             // Student
-            role: Config.user.student.name,
+            role: Config.user.roles.student.name,
             _prototype: prototypeId
         });
 
