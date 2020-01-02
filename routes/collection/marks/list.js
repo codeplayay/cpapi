@@ -15,8 +15,9 @@ router.post('/marks/list', function (request, response) {
 
     // Run
     console.log(`Finding class ${request.body._class} and then populating`);
-    Class.findOne(query).populate({
+    Class.findOne(query,{ name : 1, department : 1, semester : 1 }).populate({
         path: 'semester',
+        select: 'marks',
         populate: {
             path: 'marks',
             select: 'name total passing subject',
