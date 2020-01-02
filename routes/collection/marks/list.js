@@ -11,7 +11,6 @@ const router = express.Router();
 router.post('/marks/list', function (request, response) {
     // Prepare
     const query = {
-        _id: request.body._class
     };
 
     // Run
